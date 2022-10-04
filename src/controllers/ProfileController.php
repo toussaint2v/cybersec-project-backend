@@ -1,12 +1,18 @@
 <?php
 
 namespace Src\controllers;
+
+require_once "src/controllers/Controller.php";
+
+require_once('src/models/Invitation.php');
+require_once('src/models/Profile.php');
+require_once('src/Validation.php');
+
 use Src\models\Invitation;
 use Src\models\Profile;
 use Src\Validation;
 
-require_once('src/models/Profile.php');
-require_once('src/Validation.php');
+
 
 
 class ProfileController extends Controller
@@ -17,10 +23,10 @@ class ProfileController extends Controller
         parent::__construct();
     }
 
-    public function get($userId, $token){
+    public function get($token){
 
         $profile = new Profile();
-        return $profile->get($userId, $token);
+        return $profile->get($token);
     }
 
 
@@ -40,13 +46,16 @@ class ProfileController extends Controller
             $mess = 'Veuillez renseigner tous les champs';
             $status = 422;
         }
+
         return ['status' => $status, 'message' => $mess];
     }
 
-    public function edit($userId, $token)
+    public function edit($token)
     {
+
         $profile = new Profile();
-        return $profile->get($userId, $token);
+
+        return $profile->get($token);
     }
 
     public function update($token, $form)

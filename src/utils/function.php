@@ -1,4 +1,5 @@
 <?php
+require_once 'src/databases/Connection.php';
 
 use Src\databases\Connection;
 

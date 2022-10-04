@@ -1,11 +1,14 @@
 <?php
 
+
 namespace Src\controllers;
 include('src/utils/function.php');
 
+require_once 'src/controllers/Controller.php';
+require_once 'src/Validation.php';
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Src\Validation;
-use function test_input;
 
 
 class AuthController extends Controller
@@ -20,12 +23,13 @@ class AuthController extends Controller
 
         $validation = new Validation();
         if ($userInfo = $validation->validate($userInfo)) {
+
+
             $email = $userInfo['email'];
             $mdp = $userInfo['password'];
             $verif = $this->connection->getPdo()->prepare("SELECT * FROM users WHERE email = ? ");
             $verif->execute(array($email));
             $verif_ok = $verif->rowCount();
-
 
             if ($verif_ok === 1) {
                 $user = $verif->fetch();
@@ -65,17 +69,22 @@ class AuthController extends Controller
         return $response;
     }
 
-    public function logout($token, Response $response)
+    public function logout($token)
     {
         $this->connection->execute("UPDATE users SET token = null WHERE token = ?", array($token));
-        $response->getBody()->write('deconnexion réussie');
+        $response = [
+            'message' => "deconnexion réussie",
+            'status' => 200
+        ];
+        http_response_code(200);
+
         return $response;
     }
 
-    function checkToken($userId, $token){
+    function checkToken($token){
         $rt = false;
-        $sql = $this->connection->getPdo()->prepare( "SELECT id, username, email, address, name, first_name, age FROM users WHERE id = ? AND token = ?");
-        $sql->execute(array($userId, $token));
+        $sql = $this->connection->getPdo()->prepare( "SELECT id, username, email, address, name, first_name, age FROM users WHERE token = ?");
+        $sql->execute(array($token));
         $verif_ok = $sql->rowCount();
         if ($verif_ok === 1)
             $rt = true;

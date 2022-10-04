@@ -1,97 +1,100 @@
 <?php
 
-require_once __DIR__.'/vendor/autoload.php';
-require_once('src/controllers/ProfileController.php');
-require_once('src/controllers/AuthController.php');
-require_once('src/middleware/AuthMiddleware.php');
+cors();
+
+http_response_code(200);
+
+require_once 'src/controllers/AuthController.php';
+require_once 'src/controllers/ProfileController.php';
 
 use Src\controllers\AuthController;
 use Src\controllers\ProfileController;
-use Src\middleware\AuthMiddleware;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
-use Slim\Routing\RouteCollectorProxy;
 
-header('Access-Control-Allow-Origin: http://localhost:8080');
-header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
-header('Access-Control-Allow-Headers: Content-Type, Accept, Authorization, X-Requested-With, Application, UserId');
+$requestURL = $_SERVER['REQUEST_URI'];
+$header = apache_request_headers();
+
+// auth user
+if (isset($header['Authorization']) && (new AuthController())->checkToken($header['Authorization'])) {
+
+    switch ($_SERVER['REQUEST_METHOD']) {
+        case 'GET':
+            switch ($requestURL) {
+                case '/api/profile/edit' :
+                    $res = (new ProfileController())->edit($header['Authorization']);
+                    echo json_encode($res);
+                    break;
+                default:
+                    http_response_code(404);
+                    break;
+            }
+            break;
+        case 'POST':
+            $formData = json_decode(file_get_contents("php://input"), true);
+            switch ($requestURL) {
+                case '/api/login' :
+                    $res = (new AuthController())->login($formData);
+                    echo json_encode($res);
+                    break;
+                case '/api/logout':
+                    $res = (new AuthController())->logout( $header['Authorization']);
+                    echo json_encode($res);
+                    break;
+                case '/api/profile/update' :
+                    $res = (new ProfileController())->update($header['Authorization'], $formData);
+                    echo json_encode($res);
+                    break;
+
+                default:
+                    http_response_code(404);
+                    break;
+            }
+    }
+} // guest user
+elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
+    $formData = json_decode(file_get_contents("php://input"), true);
+    switch ($requestURL) {
+        case '/api/login' :
+            $res = (new AuthController())->login($formData);
+            echo json_encode($res);
+            break;
+        case '/api/profile/store' :
+            $myfile = fopen("newfile.txt", "w") or die("Unable to open file!");
+            $txt = $formData['name'];
+            fwrite($myfile, $txt);
+            $res = (new ProfileController())->store($formData);
+            http_response_code($res['status']);
+            echo json_encode($res['message']);
+            break;
+        default:
+            http_response_code(404);
+            break;
+    }
+}
 
 
+function cors()
+{
 
-$app = AppFactory::create();
+    // Allow from any origin
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
+        // you want to allow, and if so:
+        header("Access-Control-Allow-Origin: http://localhost:8080");
+        header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Max-Age: 86400');    // cache for 1 day
+    }
 
-//Router (slim micro framework)
+    // Access-Control headers are received during OPTIONS requests
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
-//api group prefix
-$app->group('/api', function (RouteCollectorProxy $api){
-    //create profile
-    $api->post('/profile/store', function (Request $request, Response $response){
-        $data = json_decode($request->getBody(), true);
-        $profileController = new ProfileController();
-        $res = $profileController->store($data);
-        $response->getBody()->write($res['message']);
-        return $response->withStatus($res['status']);
-    });
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+            // may also be using PUT, PATCH, HEAD etc
+            header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
 
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+            header('Access-Control-Allow-Headers: Content-Type, Accept, Authorization, X-Requested-With, Application, UserId');
 
-    //login
-    $api->post('/login', function (Request $request, Response $response, $args){
-        $user = json_decode($request->getBody(), true);
-        $authController = new AuthController();
-        $res = $authController->login($user);
-        $response->getBody()->write(json_encode($res));
-        return $response->withStatus($res['status']);
-    });
+        exit(0);
+    }
 
-    //authentification required route (middleware)
-    $api->group('', function (RouteCollectorProxy $auth) {
-        //logout
-        $auth->post('/logout', function (Request $request, Response $response, $args) {
-            $authController = new AuthController();
-            $token = $request->getHeader('Authorization');
-            $res = $authController->logout($token[0], $response);
-            return $res;
-        });
-
-        //Profile group prefix
-        $auth->group('/profile', function (RouteCollectorProxy $profile){
-            //edit profile
-            $profile->get('/edit', function (Request $request, Response $response) {
-                $profileController = new ProfileController();
-                $token = $request->getHeader('Authorization')[0];
-                $userId = $request->getHeader('UserId')[0];
-                $res = $profileController->edit($userId, $token);
-                $response->getBody()->write(json_encode($res['data']));
-
-                return $response->withStatus($res['status']);
-            });
-
-            //update profile
-            $profile->post('/update', function (Request $request, Response $response) {
-                $data = json_decode($request->getBody(), true);
-                $profileController = new ProfileController();
-                $res = $profileController->update($request->getHeader('Authorization'), $data);
-                $response->getBody()->write(json_encode($res['message']));
-
-                return $response->withStatus($res['status']);
-            });
-        });
-
-        //friend
-
-        $auth->post('/invitation/send', function (Request $request, Response $response, $args) {
-            $data = json_decode($request->getBody(), true);
-            $profileController = new ProfileController();
-            $res = $profileController->sendInvitation($data['from'], $data['to']);
-            $response->getBody()->write(json_encode($res[0]));
-            $response = $response->withStatus($res[1]);
-            return $response;
-        });
-
-    })->add(new AuthMiddleware());
-});
-
-$app->run();
-
+}

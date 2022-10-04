@@ -2,6 +2,8 @@
 
 namespace Src\models;
 use PDOException;
+require_once('src/models/Model.php');
+
 
 class Profile extends Model
 {
@@ -12,9 +14,11 @@ class Profile extends Model
     }
 
 
-    public function get($userId, $token){
-        $req = "SELECT username, address, name, first_name, age, birthDate FROM users WHERE id = ? AND token = ?";
-        $profile = $this->connection->execute($req, array($userId, $token));
+    public function get($token){
+        $req = "SELECT username, address, name, first_name, age, birthDate FROM users WHERE token = ?";
+
+        $profile = $this->connection->execute($req, array($token));
+
         return $profile;
     }
 
@@ -45,7 +49,7 @@ class Profile extends Model
 
             $sql = $this->connection->getPdo()->prepare("UPDATE users SET username = :username, name = :name, 
                  first_name = :first_name, birthDate = :birthDate,
-                 age = :age, address = :address WHERE token = '$token[0]'");
+                 age = :age, address = :address WHERE token = '$token'");
 
             $sql->execute($profile);
             $status = 200;

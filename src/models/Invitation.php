@@ -1,8 +1,10 @@
 <?php
 
 namespace Src\models;
+require_once('src/models/Model.php');
 
 use PDOException;
+
 
 class Invitation extends Model
 {

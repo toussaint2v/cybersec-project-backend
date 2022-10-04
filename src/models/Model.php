@@ -4,6 +4,7 @@ namespace Src\models;
 
 
 use PDOException;
+require_once "src/databases/Connection.php";
 use Src\databases\Connection;
 
 class Model
