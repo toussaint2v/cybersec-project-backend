@@ -1,21 +1,23 @@
 <?php
-
+// configuration cors (header response)
 cors();
 
-http_response_code(200);
-
+// import des controllers
 require_once 'src/controllers/AuthController.php';
 require_once 'src/controllers/ProfileController.php';
-
 use Src\controllers\AuthController;
 use Src\controllers\ProfileController;
 
+// recuperation de la route demandée
 $requestURL = $_SERVER['REQUEST_URI'];
+
+// recuperation du header de la requête
 $header = apache_request_headers();
 
-// auth user
+// ROUTER
+// auth user (route protégée par authentification, verification du token)
 if (isset($header['Authorization']) && (new AuthController())->checkToken($header['Authorization'])) {
-
+    // recuperation du type de requête
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
             switch ($requestURL) {
@@ -29,6 +31,7 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
             }
             break;
         case 'POST':
+            // recuperation des données envoyées par la requête
             $formData = json_decode(file_get_contents("php://input"), true);
             switch ($requestURL) {
                 case '/api/login' :
@@ -50,12 +53,14 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
             }
     }
 }
+// mauvais token
 elseif (isset($header['Authorization']) && !(new AuthController())->checkToken($header['Authorization'])){
     http_response_code(401);
     echo "veuillez vous connecter";
 }
-// guest user
+// guest user (route réservée au utilisateur non authentifié
 elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
+    // recuperation des données envoyées par la requête
     $formData = json_decode(file_get_contents("php://input"), true);
     switch ($requestURL) {
         case '/api/login' :
@@ -64,9 +69,6 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
             echo json_encode($res);
             break;
         case '/api/profile/store' :
-            $myfile = fopen("newfile.txt", "w") or die("Unable to open file!");
-            $txt = $formData['name'];
-            fwrite($myfile, $txt);
             $res = (new ProfileController())->store($formData);
             http_response_code($res['status']);
             echo json_encode($res['message']);
@@ -78,9 +80,9 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
 }
 
 
+// configuration cors
 function cors()
 {
-
     // Allow from any origin
     if (isset($_SERVER['HTTP_ORIGIN'])) {
         // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
