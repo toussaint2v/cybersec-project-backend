@@ -60,7 +60,8 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
     switch ($requestURL) {
         case '/api/login' :
             $res = (new AuthController())->login($formData);
-            echo json_encode($res);
+            http_response_code($res['status']);
+            echo json_encode($res['message']);
             break;
         case '/api/profile/store' :
             $myfile = fopen("newfile.txt", "w") or die("Unable to open file!");
@@ -84,7 +85,7 @@ function cors()
     if (isset($_SERVER['HTTP_ORIGIN'])) {
         // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
         // you want to allow, and if so:
-        header("Access-Control-Allow-Origin: http://localhost:8080");
+        header("Access-Control-Allow-Origin: http://172.20.10.4:8080");
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Max-Age: 86400');    // cache for 1 day
     }
