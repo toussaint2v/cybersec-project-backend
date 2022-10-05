@@ -49,7 +49,12 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                     break;
             }
     }
-} // guest user
+}
+elseif (isset($header['Authorization']) && !(new AuthController())->checkToken($header['Authorization'])){
+    http_response_code(401);
+    echo "veuillez vous connecter";
+}
+// guest user
 elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
     $formData = json_decode(file_get_contents("php://input"), true);
     switch ($requestURL) {
