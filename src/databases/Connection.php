@@ -48,6 +48,33 @@ class Connection{
         try {
             $sql = $this->pdo->prepare($req);
             $sql->execute($form);
+            $res = ['data' => 'Ok', 'status' => 200];
+        } catch (PDOException $e) {
+            $status = $e->getCode();
+            $mess = $e->getMessage();
+            $res = ['data' => $mess, 'status' => $status];
+        }
+        return $res;
+    }
+
+    public function get($req, $form = null){
+        try {
+            $sql = $this->pdo->prepare($req);
+            $sql->execute($form);
+            $data = $sql->fetch(PDO::FETCH_ASSOC);
+            $res = ['data' => $data, 'status' => 200];
+        } catch (PDOException $e) {
+            $status = $e->getCode();
+            $mess = $e->getMessage();
+            $res = ['data' => $mess, 'status' => $status];
+        }
+        return $res;
+    }
+
+    public function getAll($req, $form = null){
+        try {
+            $sql = $this->pdo->prepare($req);
+            $sql->execute($form);
             $data = $sql->fetchAll(PDO::FETCH_ASSOC);
             $res = ['data' => $data, 'status' => 200];
         } catch (PDOException $e) {

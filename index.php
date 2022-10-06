@@ -5,6 +5,7 @@ cors();
 // import des controllers
 require_once 'src/controllers/AuthController.php';
 require_once 'src/controllers/ProfileController.php';
+require_once 'src/controllers/InvitaionController.php';
 use Src\controllers\AuthController;
 use Src\controllers\InvitaionController;
 use Src\controllers\ProfileController;
@@ -52,11 +53,11 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                     echo json_encode($res);
                     break;
                 case '/api/profiles/search' :
-                    $res = (new ProfileController())->searchProfiles($formData['search']);
+                    $res = (new ProfileController())->searchProfiles($formData);
                     echo json_encode($res);
                     break;
                 case '/api/invitation/send' :
-                    $res = (new InvitaionController())->store($header['Authorization'], $formData);
+                    $res = (new InvitaionController())->store($formData['from'], $formData['to']);
                     echo json_encode($res);
                     break;
 

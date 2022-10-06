@@ -44,7 +44,7 @@ class AuthController extends Controller
                     $this->connection->execute("UPDATE users SET token = ? WHERE email = ?", array($token, $email));
 
                     $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE id = ? AND token = ?";
-                    $profile = $this->connection->execute($req, array($user['id'], $token));
+                    $profile = $this->connection->get($req, array($user['id'], $token));
 
                     $response = [
                         'message' => "Connexion réussie",
@@ -71,10 +71,10 @@ class AuthController extends Controller
 
     public function logout($token)
     {
-        $this->connection->execute("UPDATE users SET token = null WHERE token = ?", array($token));
+        $req = $this->connection->execute("UPDATE users SET token = null WHERE token = ?", array($token));
         $response = [
-            'message' => "deconnexion réussie",
-            'status' => 200
+            'message' => $req['message'],
+            'status' => $req['status']
         ];
         http_response_code(200);
 

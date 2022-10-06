@@ -15,17 +15,17 @@ class Profile extends Model
 
 
     public function get($token){
-        $req = "SELECT username, address, name, first_name, age, birthDate FROM users WHERE token = ?";
+        $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE token = ?";
 
-        $profile = $this->connection->execute($req, array($token));
+        $profile = $this->connection->get($req, array($token));
 
         return $profile;
     }
 
     public function getAll(){
-        $req = "SELECT username, address, name, first_name, age, birthDate FROM users";
+        $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users";
 
-        $profiles = $this->connection->execute($req);
+        $profiles = $this->connection->getAll($req);
 
         return $profiles;
     }
@@ -57,7 +57,7 @@ class Profile extends Model
 
             $sql = $this->connection->getPdo()->prepare("UPDATE users SET username = :username, name = :name, 
                  first_name = :first_name, birthDate = :birthDate,
-                 age = :age, address = :address WHERE token = '$token'");
+                 age = :age, address = :address WHERE token = '$token' && id = :id");
 
             $sql->execute($profile);
             $status = 200;
@@ -78,11 +78,12 @@ class Profile extends Model
         return $response;
     }
 
-    public function search($search){
-        $req = "SELECT username, address, name, first_name, age, birthDate FROM users WHERE name LIKE '%{$search}%' OR
-                 first_name LIKE '%{$search}%' OR  username LIKE '%{$search}%' ";
+    public function search($form){
+        $req = "SELECT id, username, address, name, first_name, age, birthDate, `to`, `accepted` FROM users 
+               LEFT JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE (name LIKE '%{$form['search']}%' OR 
+                first_name LIKE '%{$form['search']}%' OR username LIKE '%{$form['search']}%') AND {$form['idProfile']} <> id ";
 
-        $profiles = $this->connection->execute($req);
+        $profiles = $this->connection->getAll($req);
 
         return $profiles;
     }

@@ -77,8 +77,8 @@ class ProfileController extends Controller
         return (new Profile())->getAll();
     }
 
-    public function searchProfiles($search){
-        return (new Profile())->search($search);
+    public function searchProfiles($form){
+        return (new Profile())->search($form);
     }
 
 
