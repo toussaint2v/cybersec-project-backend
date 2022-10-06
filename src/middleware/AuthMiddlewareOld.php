@@ -7,7 +7,7 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 use Src\controllers\AuthController;
 
-class AuthMiddleware
+class AuthMiddlewareOld
 {
     /**
      * Example middleware invokable class
@@ -20,8 +20,7 @@ class AuthMiddleware
     {
         $authController = new AuthController();
         $token = $request->getHeader('Authorization')[0];
-        $userId = $request->getHeader('UserId')[0];
-        if ($token && $authController->checkToken($userId, $token)) {
+        if ($token && $authController->checkToken($token)) {
             $response = $handler->handle($request);
             $existingContent = (string)$response->getBody();
             $response = new Response();

@@ -6,6 +6,7 @@ cors();
 require_once 'src/controllers/AuthController.php';
 require_once 'src/controllers/ProfileController.php';
 use Src\controllers\AuthController;
+use Src\controllers\InvitaionController;
 use Src\controllers\ProfileController;
 
 // recuperation de la route demandée
@@ -23,6 +24,10 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
             switch ($requestURL) {
                 case '/api/profile/edit' :
                     $res = (new ProfileController())->edit($header['Authorization']);
+                    echo json_encode($res);
+                    break;
+                case '/api/profiles' :
+                    $res = (new ProfileController())->getAll();
                     echo json_encode($res);
                     break;
                 default:
@@ -46,6 +51,15 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                     $res = (new ProfileController())->update($header['Authorization'], $formData);
                     echo json_encode($res);
                     break;
+                case '/api/profiles/search' :
+                    $res = (new ProfileController())->searchProfiles($formData['search']);
+                    echo json_encode($res);
+                    break;
+                case '/api/invitation/send' :
+                    $res = (new InvitaionController())->store($header['Authorization'], $formData);
+                    echo json_encode($res);
+                    break;
+
 
                 default:
                     http_response_code(404);

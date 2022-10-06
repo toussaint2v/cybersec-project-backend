@@ -22,6 +22,14 @@ class Profile extends Model
         return $profile;
     }
 
+    public function getAll(){
+        $req = "SELECT username, address, name, first_name, age, birthDate FROM users";
+
+        $profiles = $this->connection->execute($req);
+
+        return $profiles;
+    }
+
     public function create($profile)
     {
         $res = false;
@@ -68,6 +76,15 @@ class Profile extends Model
         ];
 
         return $response;
+    }
+
+    public function search($search){
+        $req = "SELECT username, address, name, first_name, age, birthDate FROM users WHERE name LIKE '%{$search}%' OR
+                 first_name LIKE '%{$search}%' OR  username LIKE '%{$search}%' ";
+
+        $profiles = $this->connection->execute($req);
+
+        return $profiles;
     }
 
 }

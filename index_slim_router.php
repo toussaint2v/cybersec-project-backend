@@ -6,8 +6,9 @@ require_once('src/controllers/AuthController.php');
 require_once('src/middleware/AuthMiddleware.php');
 
 use Src\controllers\AuthController;
+use Src\controllers\InvitaionController;
 use Src\controllers\ProfileController;
-use Src\middleware\AuthMiddleware;
+use Src\middleware\AuthMiddlewareOld;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -85,14 +86,14 @@ $app->group('/api', function (RouteCollectorProxy $api){
 
         $auth->post('/invitation/send', function (Request $request, Response $response, $args) {
             $data = json_decode($request->getBody(), true);
-            $profileController = new ProfileController();
-            $res = $profileController->sendInvitation($data['from'], $data['to']);
+
+            $res = (new InvitaionController())->store($data['from'], $data['to']);
             $response->getBody()->write(json_encode($res[0]));
             $response = $response->withStatus($res[1]);
             return $response;
         });
 
-    })->add(new AuthMiddleware());
+    })->add(new AuthMiddlewareOld());
 });
 
 $app->run();

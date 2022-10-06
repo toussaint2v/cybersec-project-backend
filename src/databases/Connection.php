@@ -48,7 +48,7 @@ class Connection{
         try {
             $sql = $this->pdo->prepare($req);
             $sql->execute($form);
-            $data = $sql->fetch(PDO::FETCH_ASSOC);
+            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
             $res = ['data' => $data, 'status' => 200];
         } catch (PDOException $e) {
             $status = $e->getCode();

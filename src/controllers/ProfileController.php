@@ -33,7 +33,7 @@ class ProfileController extends Controller
     public function store(array $form)
     {
         $validation = new Validation();
-        $status = 200;
+        $status = 201;
         $mess = "L'utilisateur a été enregistrer";
 
         if ($form = $validation->validate($form)) {
@@ -73,20 +73,13 @@ class ProfileController extends Controller
         return $res;
     }
 
-    public function sendInvitation($from, $to){
-        $status = 200;
-        $invitation = new Invitation();
-        $res = $invitation->create([$from, $to, false, false]);
-        if ($res){
-            $res = "Invitation envoyer";
-        }else {
-            $status = 422;
-            $res = "Erreur";
-        }
-        return [$res, $status];
+    public function getAll(){
+        return (new Profile())->getAll();
     }
 
-    public function friends(){
-
+    public function searchProfiles($search){
+        return (new Profile())->search($search);
     }
+
+
 }
