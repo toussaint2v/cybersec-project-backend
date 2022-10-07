@@ -20,4 +20,12 @@ class InvitaionController
 
         return $res;
     }
+
+    public function getAll($token){
+
+        $invitation = new Invitation();
+        $res = $invitation->getAll($token);
+
+        return $res;
+    }
 }

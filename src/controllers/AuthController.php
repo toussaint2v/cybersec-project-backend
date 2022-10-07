@@ -7,7 +7,6 @@ include('src/utils/function.php');
 require_once 'src/controllers/Controller.php';
 require_once 'src/Validation.php';
 
-use Psr\Http\Message\ResponseInterface as Response;
 use Src\Validation;
 
 
@@ -30,13 +29,13 @@ class AuthController extends Controller
             $verif = $this->connection->getPdo()->prepare("SELECT * FROM users WHERE email = ? ");
             $verif->execute(array($email));
             $verif_ok = $verif->rowCount();
-
+            $response = [
+                'message' => "Adresse e-mail ou mot de passe incorrect",
+                'status' => 422
+            ];
             if ($verif_ok === 1) {
                 $user = $verif->fetch();
-                $response = [
-                    'message' => "Adresse e-mail ou mot de passe incorrect",
-                    'status' => 422
-                ];
+
                 if (password_verify($mdp, $user['password'])) {
 
                     $token = openssl_random_pseudo_bytes(64);
@@ -53,11 +52,6 @@ class AuthController extends Controller
                         'token' => $token
                     ];
                 }
-            }else{
-                $response = [
-                    'message' => "Adresse e-mail ou mot de passe incorrect",
-                    'status' => 422
-                ];
             }
         }else{
             $response = [

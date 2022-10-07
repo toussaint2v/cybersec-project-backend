@@ -24,12 +24,16 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
         case 'GET':
             switch ($requestURL) {
                 case '/api/profile/edit' :
-                    $res = (new ProfileController())->edit($header['Authorization']);
+                    $res = ProfileController::edit($header['Authorization']);
                     echo json_encode($res);
                     break;
                 case '/api/profiles' :
-                    $res = (new ProfileController())->getAll();
+                    $res = ProfileController::getAll();
                     echo json_encode($res);
+                    break;
+                case '/api/invitations' :
+                    $res = (new InvitaionController())->getAll($header['Authorization']);
+                    echo json_encode($res['data']);
                     break;
                 default:
                     http_response_code(404);
@@ -49,11 +53,11 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                     echo json_encode($res);
                     break;
                 case '/api/profile/update' :
-                    $res = (new ProfileController())->update($header['Authorization'], $formData);
+                    $res = ProfileController::update($header['Authorization'], $formData);
                     echo json_encode($res);
                     break;
                 case '/api/profiles/search' :
-                    $res = (new ProfileController())->searchProfiles($formData);
+                    $res = ProfileController::searchProfiles($formData);
                     echo json_encode($res);
                     break;
                 case '/api/invitation/send' :
@@ -66,6 +70,8 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                     http_response_code(404);
                     break;
             }
+        case 'DELETE':
+
     }
 }
 // mauvais token
@@ -84,7 +90,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
             echo json_encode($res);
             break;
         case '/api/profile/store' :
-            $res = (new ProfileController())->store($formData);
+            $res = ProfileController::store($formData);
             http_response_code($res['status']);
             echo json_encode($res['message']);
             break;

@@ -26,5 +26,13 @@ class Invitation extends Model
         }
         return ["status" => $status, "message" => $mess ];
     }
+
+    public function getAll($token){
+        $sql = 'SELECT id, username, address, name, first_name, age, birthDate,`to`,`from` FROM users 
+            JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE token = ? AND accepted = false';
+        $res =  $this->connection->getAll($sql, array($token));
+
+        return $res;
+    }
 }
 

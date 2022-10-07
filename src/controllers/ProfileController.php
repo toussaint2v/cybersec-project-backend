@@ -18,19 +18,20 @@ use Src\Validation;
 class ProfileController extends Controller
 {
 
+
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function get($token){
+    public static function get($token){
 
         $profile = new Profile();
         return $profile->get($token);
     }
 
 
-    public function store(array $form)
+    public static function store(array $form)
     {
         $validation = new Validation();
         $status = 201;
@@ -50,7 +51,7 @@ class ProfileController extends Controller
         return ['status' => $status, 'message' => $mess];
     }
 
-    public function edit($token)
+    public static function edit($token)
     {
 
         $profile = new Profile();
@@ -58,7 +59,7 @@ class ProfileController extends Controller
         return $profile->get($token);
     }
 
-    public function update($token, $form)
+    public static function update($token, $form)
     {
         $profile = new Profile();
         $validation = new Validation();
@@ -73,11 +74,11 @@ class ProfileController extends Controller
         return $res;
     }
 
-    public function getAll(){
+    public static function  getAll(){
         return (new Profile())->getAll();
     }
 
-    public function searchProfiles($form){
+    public static function searchProfiles($form){
         return (new Profile())->search($form);
     }
 
