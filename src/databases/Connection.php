@@ -45,43 +45,44 @@ class Connection{
     }
 
     public function execute($req, $form = null){
+        $status = 200;
         try {
             $sql = $this->pdo->prepare($req);
             $sql->execute($form);
-            $res = ['data' => 'Ok', 'status' => 200];
+            $res = "OK";
         } catch (PDOException $e) {
             $status = $e->getCode();
-            $mess = $e->getMessage();
-            $res = ['data' => $mess, 'status' => $status];
+            $res = $e->getMessage();
         }
+        http_response_code($status);
         return $res;
     }
 
     public function get($req, $form = null){
+        $status = 200;
         try {
             $sql = $this->pdo->prepare($req);
             $sql->execute($form);
-            $data = $sql->fetch(PDO::FETCH_ASSOC);
-            $res = ['data' => $data, 'status' => 200];
+            $res = $sql->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             $status = $e->getCode();
-            $mess = $e->getMessage();
-            $res = ['data' => $mess, 'status' => $status];
+            $res = $e->getMessage();
         }
+        http_response_code($status);
         return $res;
     }
 
     public function getAll($req, $form = null){
+        $status = 200;
         try {
             $sql = $this->pdo->prepare($req);
             $sql->execute($form);
-            $data = $sql->fetchAll(PDO::FETCH_ASSOC);
-            $res = ['data' => $data, 'status' => 200];
+            $res = $sql->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             $status = $e->getCode();
-            $mess = $e->getMessage();
-            $res = ['data' => $mess, 'status' => $status];
+            $res = $e->getMessage();
         }
+        http_response_code($status);
         return $res;
     }
 

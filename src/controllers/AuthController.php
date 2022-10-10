@@ -19,7 +19,6 @@ class AuthController extends Controller
 
     public function login(array $userInfo)
     {
-
         $validation = new Validation();
         if ($userInfo = $validation->validate($userInfo)) {
 
@@ -37,11 +36,9 @@ class AuthController extends Controller
                 $user = $verif->fetch();
 
                 if (password_verify($mdp, $user['password'])) {
-
                     $token = openssl_random_pseudo_bytes(64);
                     $token = bin2hex($token);
                     $this->connection->execute("UPDATE users SET token = ? WHERE email = ?", array($token, $email));
-
                     $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE id = ? AND token = ?";
                     $profile = $this->connection->get($req, array($user['id'], $token));
 
@@ -59,20 +56,20 @@ class AuthController extends Controller
                 'status' => 422
             ];
         }
+        http_response_code($response['status']);
 
-        return $response;
+        echo json_encode($response);
     }
 
     public function logout($token)
     {
-        $req = $this->connection->execute("UPDATE users SET token = null WHERE token = ?", array($token));
-        $response = [
-            'message' => $req['message'],
-            'status' => $req['status']
-        ];
-        http_response_code(200);
+        $message = "Erreur";
+        $res = $this->connection->execute("UPDATE users SET token = null WHERE token = ?", array($token));
 
-        return $response;
+        if($res === "OK"){
+            $message = "Déconnexion réussie";
+        }
+        echo json_encode($message);
     }
 
     function checkToken($token){

@@ -2,11 +2,12 @@
 
 namespace Src\controllers;
 
+require_once "src/models/Invitation.php";
 use Src\models\Invitation;
 
 class InvitaionController
 {
-    public function store($from, $to){
+    public static function store($from, $to){
 
         $invitation = new Invitation();
         if ($from !== $to){
@@ -17,15 +18,22 @@ class InvitaionController
                 'message' => "Impossible"
             ];
         }
-
-        return $res;
+        echo json_encode($res);
     }
 
-    public function getAll($token){
+    public static function getAll($token){
 
         $invitation = new Invitation();
         $res = $invitation->getAll($token);
 
-        return $res;
+        echo json_encode($res);
+    }
+
+    public static function destroy($from, $to){
+
+        $invitation = new Invitation();
+        $res = $invitation->delete($from, $to);
+
+        echo json_encode($res);
     }
 }

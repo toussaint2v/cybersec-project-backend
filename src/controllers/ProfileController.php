@@ -3,22 +3,15 @@
 namespace Src\controllers;
 
 require_once "src/controllers/Controller.php";
-
-require_once('src/models/Invitation.php');
 require_once('src/models/Profile.php');
 require_once('src/Validation.php');
 
-use Src\models\Invitation;
 use Src\models\Profile;
 use Src\Validation;
 
 
-
-
 class ProfileController extends Controller
 {
-
-
     public function __construct()
     {
         parent::__construct();
@@ -27,7 +20,8 @@ class ProfileController extends Controller
     public static function get($token){
 
         $profile = new Profile();
-        return $profile->get($token);
+
+        echo json_encode($profile->get($token));
     }
 
 
@@ -38,25 +32,19 @@ class ProfileController extends Controller
         $mess = "L'utilisateur a été enregistrer";
 
         if ($form = $validation->validate($form)) {
-            $profile = new Profile();
-            if ($error = $profile->create($form)) {
-                $status = $error['status'];
-                $mess = $error['message'];
-            }
+            (new Profile())->create($form);
         } else {
             $mess = 'Veuillez renseigner tous les champs';
             $status = 422;
         }
-
-        return ['status' => $status, 'message' => $mess];
+        http_response_code($status);
+        echo json_encode($mess);
     }
 
     public static function edit($token)
     {
-
         $profile = new Profile();
-
-        return $profile->get($token);
+        echo json_encode($profile->get($token));
     }
 
     public static function update($token, $form)
@@ -66,20 +54,21 @@ class ProfileController extends Controller
         if ($form = $validation->validate($form))
             $res = $profile->update($token, $form);
         else{
-            $res = [
-                'message' => "Une erreur est survenu",
-                'status' => 422
-            ];
+            http_response_code(422);
+            $res = "Une erreur est survenu";
         }
-        return $res;
+
+        echo json_encode($res);;
     }
 
     public static function  getAll(){
-        return (new Profile())->getAll();
+
+        echo json_encode((new Profile())->getAll());
     }
 
     public static function searchProfiles($form){
-        return (new Profile())->search($form);
+
+        echo json_encode((new Profile())->search($form));;
     }
 
 

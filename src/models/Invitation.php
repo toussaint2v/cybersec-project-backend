@@ -15,16 +15,14 @@ class Invitation extends Model
     }
 
     public function create($from, $to){
-        $status = 201;
-        $mess = "L'invitation a bien été envoyée";
-        try {
-            $sql = $this->connection->getPdo()->prepare('INSERT INTO friends_invitations (`from`, `to`,`accepted`,`opened`) VALUE (?,?,?,?)');
-            $sql->execute(array($from, $to, 0, 0 ));
-        } catch (PDOException $e) {
-            $status = 422;
-            $mess = $e->getMessage();
+
+        $res = $this->connection->execute('INSERT INTO friends_invitations (`from`, `to`,`accepted`,`opened`) VALUE (?,?,?,?)',
+            array($from, $to, 0, 0 ));
+        if ($res === "OK"){
+            $res = "L'invitation a bien été envoyée";
+            http_response_code(201);
         }
-        return ["status" => $status, "message" => $mess ];
+        return $res;
     }
 
     public function getAll($token){
@@ -32,6 +30,12 @@ class Invitation extends Model
             JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE token = ? AND accepted = false';
         $res =  $this->connection->getAll($sql, array($token));
 
+        return $res;
+    }
+
+    public function delete($from, $to){
+        $sql = 'DELETE FROM cyber_sec.friends_invitations WHERE `from` = ? AND `to` = ?';
+        $res =  $this->connection->execute($sql, array($from, $to));
         return $res;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 // configuration cors (header response)
 cors();
 
@@ -19,21 +20,19 @@ $header = apache_request_headers();
 // ROUTER
 // auth user (route protégée par authentification, verification du token)
 if (isset($header['Authorization']) && (new AuthController())->checkToken($header['Authorization'])) {
+    $token = $header['Authorization'];
     // recuperation du type de requête
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
             switch ($requestURL) {
                 case '/api/profile/edit' :
-                    $res = ProfileController::edit($header['Authorization']);
-                    echo json_encode($res);
+                    ProfileController::edit($token);
                     break;
                 case '/api/profiles' :
-                    $res = ProfileController::getAll();
-                    echo json_encode($res);
+                    ProfileController::getAll();
                     break;
                 case '/api/invitations' :
-                    $res = (new InvitaionController())->getAll($header['Authorization']);
-                    echo json_encode($res['data']);
+                    InvitaionController::getAll($token);
                     break;
                 default:
                     http_response_code(404);
@@ -44,33 +43,26 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
             // recuperation des données envoyées par la requête
             $formData = json_decode(file_get_contents("php://input"), true);
             switch ($requestURL) {
-                case '/api/login' :
-                    $res = (new AuthController())->login($formData);
-                    echo json_encode($res);
-                    break;
                 case '/api/logout':
-                    $res = (new AuthController())->logout( $header['Authorization']);
-                    echo json_encode($res);
+                    (new AuthController())->logout($token);
                     break;
                 case '/api/profile/update' :
-                    $res = ProfileController::update($header['Authorization'], $formData);
-                    echo json_encode($res);
+                    ProfileController::update($token, $formData);
                     break;
                 case '/api/profiles/search' :
-                    $res = ProfileController::searchProfiles($formData);
-                    echo json_encode($res);
+                    ProfileController::searchProfiles($formData);
                     break;
                 case '/api/invitation/send' :
-                    $res = (new InvitaionController())->store($formData['from'], $formData['to']);
-                    echo json_encode($res);
+                    InvitaionController::store($formData['from'], $formData['to']);
                     break;
-
-
+                case '/api/invitation/destroy':
+                    //InvitaionController::destroy($formData['from'], $formData['to']);
+                    echo json_encode($formData);
+                    break;
                 default:
                     http_response_code(404);
                     break;
             }
-        case 'DELETE':
 
     }
 }
@@ -85,14 +77,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
     $formData = json_decode(file_get_contents("php://input"), true);
     switch ($requestURL) {
         case '/api/login' :
-            $res = (new AuthController())->login($formData);
-            http_response_code($res['status']);
-            echo json_encode($res);
+            (new AuthController())->login($formData);
             break;
         case '/api/profile/store' :
-            $res = ProfileController::store($formData);
-            http_response_code($res['status']);
-            echo json_encode($res['message']);
+            ProfileController::store($formData);
             break;
         default:
             http_response_code(404);
@@ -110,7 +98,6 @@ function cors()
         // you want to allow, and if so:
         header("Access-Control-Allow-Origin: http://localhost:8080");
         header('Access-Control-Allow-Credentials: true');
-        header('Access-Control-Max-Age: 86400');    // cache for 1 day
     }
 
     // Access-Control headers are received during OPTIONS requests
@@ -121,7 +108,7 @@ function cors()
             header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
 
         if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
-            header('Access-Control-Allow-Headers: Content-Type, Accept, Authorization, X-Requested-With, Application, UserId');
+            header('Access-Control-Allow-Headers: Content-Type, Accept, Authorization, X-Requested-With, Application');
 
         exit(0);
     }

@@ -9,10 +9,11 @@ class Validation
         foreach ($data as $key => $e){
             if ($e == '' | !$e | $e == null){
                 $isEmpty = true;
+            }else{
+                $e = trim((String) $e);
+                $e = stripslashes($e);
+                $data[$key] = htmlspecialchars($e);
             }
-            $e = trim((String) $e);
-            $e = stripslashes($e);
-            $data[$key] = htmlspecialchars($e);
         }
         $res = $data;
 

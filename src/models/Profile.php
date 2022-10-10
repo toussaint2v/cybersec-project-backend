@@ -16,7 +16,6 @@ class Profile extends Model
 
     public function get($token){
         $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE token = ?";
-
         $profile = $this->connection->get($req, array($token));
 
         return $profile;
@@ -44,7 +43,8 @@ class Profile extends Model
             else
                 $mess = $e->getMessage();
 
-            $res = ['status' => $status, 'message' => $mess];
+            $res = $mess;
+            http_response_code($status);
         }
         return $res;
     }
@@ -52,7 +52,6 @@ class Profile extends Model
     public function update($token, $profile)
     {
         $status = 422;
-        $mess = "Erreur";
         try {
 
             $sql = $this->connection->getPdo()->prepare("UPDATE users SET username = :username, name = :name, 
@@ -65,17 +64,13 @@ class Profile extends Model
 
         } catch (PDOException $e) {
             if ($e->getCode() == 23000) {
-                $status = 422;
                 $mess = "L'email ou le nom d'utilisateur est déjà utilisé !!!";
             } else
                 $mess = $e->getMessage();
         }
-        $response = [
-            'message' => $mess,
-            'status' => $status
-        ];
 
-        return $response;
+        http_response_code($status);
+        return $mess;
     }
 
     public function search($form){
