@@ -13,7 +13,7 @@ class Connection{
     private $host = "localhost";
     private $dbname = "cyber_sec";
     private $username = "root";
-    private $password = "password";
+    private $password = "";
 
     public function __construct(){
         //connection à la base de données

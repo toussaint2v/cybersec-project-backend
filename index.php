@@ -96,7 +96,7 @@ function cors()
     if (isset($_SERVER['HTTP_ORIGIN'])) {
         // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
         // you want to allow, and if so:
-        header("Access-Control-Allow-Origin: http://localhost:8080");
+        header("Access-Control-Allow-Origin: http://localhost:8082");
         header('Access-Control-Allow-Credentials: true');
     }
 

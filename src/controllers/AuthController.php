@@ -41,7 +41,7 @@ class AuthController extends Controller
                     $this->connection->execute("UPDATE users SET token = ? WHERE email = ?", array($token, $email));
                     $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE id = ? AND token = ?";
                     $profile = $this->connection->get($req, array($user['id'], $token));
-
+                    http_response_code(200);
                     $response = [
                         'message' => "Connexion réussie",
                         'status' => 200,
