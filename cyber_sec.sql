@@ -33,7 +33,7 @@ CREATE TABLE `comments` (
   KEY `comments_users_id_fk` (`user_id`),
   CONSTRAINT `comments_posts_id_fk` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
   CONSTRAINT `comments_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,7 +62,7 @@ CREATE TABLE `friends_invitations` (
   CONSTRAINT `friends_invitations_users_from_fk` FOREIGN KEY (`from`) REFERENCES `users` (`id`),
   CONSTRAINT `friends_invitations_users_null_fk` FOREIGN KEY (`from`) REFERENCES `users` (`id`),
   CONSTRAINT `friends_invitations_users_to_fk` FOREIGN KEY (`to`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,7 +94,7 @@ CREATE TABLE `messages` (
   KEY `messages_users_id_fk_2` (`to`),
   CONSTRAINT `messages_users_id_fk` FOREIGN KEY (`from`) REFERENCES `users` (`id`),
   CONSTRAINT `messages_users_id_fk_2` FOREIGN KEY (`to`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,7 +122,7 @@ CREATE TABLE `posts` (
   UNIQUE KEY `posts_id_uindex` (`id`),
   KEY `posts_users_id_fk` (`user_id`),
   CONSTRAINT `posts_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,7 +158,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_username_uindex` (`username`),
   UNIQUE KEY `users_email_uindex` (`email`),
   UNIQUE KEY `users_token_uindex` (`token`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
