@@ -17,8 +17,12 @@ class Validation
         }
         $res = $data;
 
-        if ($isEmpty)
-            $res = false;
+        if ($isEmpty){
+            http_response_code(422);
+            echo "Veuillez remplir tous les champs";
+            exit(0);
+        }
+
 
         return $res;
     }

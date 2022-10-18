@@ -24,15 +24,23 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
     // recuperation du type de requête
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
+            $url_components = parse_url($requestURL);
+            $requestURL = $url_components['path'];
             switch ($requestURL) {
                 case '/api/profile/edit' :
-                    ProfileController::edit($token);
+                    ProfileController::edit($_GET['id']);
                     break;
                 case '/api/profiles' :
                     ProfileController::getAll();
                     break;
                 case '/api/invitations' :
                     InvitaionController::getAll($token);
+                    break;
+                case '/api/profiles/search' :
+                    ProfileController::searchProfiles($_GET['search'], $_GET['idProfile']);
+                    break;
+                case '/api/friends' :
+                    ProfileController::getFriends($_GET['idProfile']);
                     break;
                 default:
                     http_response_code(404);
@@ -49,20 +57,24 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                 case '/api/profile/update' :
                     ProfileController::update($token, $formData);
                     break;
-                case '/api/profiles/search' :
-                    ProfileController::searchProfiles($formData);
-                    break;
                 case '/api/invitation/send' :
                     InvitaionController::store($formData['from'], $formData['to']);
                     break;
-                case '/api/invitation/destroy':
-                    //InvitaionController::destroy($formData['from'], $formData['to']);
-                    echo json_encode($formData);
-                    break;
+
                 default:
                     http_response_code(404);
                     break;
             }
+            break;
+        case 'DELETE':
+            $url_components = parse_url($requestURL);
+            $requestURL = $url_components['path'];
+            switch ($requestURL) {
+                case '/api/invitation/destroy':
+                    InvitaionController::destroy($_GET['from'], $_GET['to']);
+                    break;
+            }
+
 
     }
 }
@@ -96,7 +108,7 @@ function cors()
     if (isset($_SERVER['HTTP_ORIGIN'])) {
         // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
         // you want to allow, and if so:
-        header("Access-Control-Allow-Origin: http://localhost:8082");
+        header("Access-Control-Allow-Origin: http://localhost:8081");
         header('Access-Control-Allow-Credentials: true');
     }
 

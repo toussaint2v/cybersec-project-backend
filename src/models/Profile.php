@@ -14,9 +14,9 @@ class Profile extends Model
     }
 
 
-    public function get($token){
-        $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE token = ?";
-        $profile = $this->connection->get($req, array($token));
+    public function get($id){
+        $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE id = ?";
+        $profile = $this->connection->get($req, array($id));
 
         return $profile;
     }
@@ -73,14 +73,22 @@ class Profile extends Model
         return $mess;
     }
 
-    public function search($form){
-        $req = "SELECT id, username, address, name, first_name, age, birthDate, `to`, `accepted` FROM users 
-               LEFT JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE (name LIKE '%{$form['search']}%' OR 
-                first_name LIKE '%{$form['search']}%' OR username LIKE '%{$form['search']}%') AND {$form['idProfile']} <> id ";
+    public function search($search, $idProfile){
+        $req = "SELECT id, username, address, name, first_name, age, birthDate, `to`, `from`, `accepted` FROM users 
+               LEFT JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE (name LIKE '%{$search}%' OR 
+                first_name LIKE '%{$search}%' OR username LIKE '%{$search}%') AND {$idProfile} <> id ";
 
         $profiles = $this->connection->getAll($req);
 
         return $profiles;
     }
 
+    public function getFriends($idProfile){
+        $req = "SELECT id, name, first_name, username, `to`, `from` FROM users 
+               LEFT JOIN friends_invitations ON users.id = friends_invitations.`to` OR
+                                                users.id = friends_invitations.`from` WHERE accepted = 1 AND {$idProfile} = id ";
+
+        $profiles = $this->connection->getAll($req);
+        return $profiles;
+    }
 }

@@ -41,10 +41,10 @@ class ProfileController extends Controller
         echo json_encode($mess);
     }
 
-    public static function edit($token)
+    public static function edit($id)
     {
         $profile = new Profile();
-        echo json_encode($profile->get($token));
+        echo json_encode($profile->get($id));
     }
 
     public static function update($token, $form)
@@ -66,10 +66,14 @@ class ProfileController extends Controller
         echo json_encode((new Profile())->getAll());
     }
 
-    public static function searchProfiles($form){
+    public static function searchProfiles($search, $idProfile){
 
-        echo json_encode((new Profile())->search($form));;
+        echo json_encode((new Profile())->search($search, $idProfile));;
     }
 
+    public static function getFriends($idProfile){
+
+        echo json_encode((new Profile())->getFriends($idProfile));
+    }
 
 }

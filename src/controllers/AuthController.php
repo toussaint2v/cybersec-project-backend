@@ -21,17 +21,13 @@ class AuthController extends Controller
     {
         $validation = new Validation();
         if ($userInfo = $validation->validate($userInfo)) {
-
-
             $email = $userInfo['email'];
             $mdp = $userInfo['password'];
             $verif = $this->connection->getPdo()->prepare("SELECT * FROM users WHERE email = ? ");
             $verif->execute(array($email));
             $verif_ok = $verif->rowCount();
-            $response = [
-                'message' => "Adresse e-mail ou mot de passe incorrect",
-                'status' => 422
-            ];
+            $response = "Adresse e-mail ou mot de passe incorrect";
+            http_response_code(422);
             if ($verif_ok === 1) {
                 $user = $verif->fetch();
 
@@ -44,20 +40,15 @@ class AuthController extends Controller
                     http_response_code(200);
                     $response = [
                         'message' => "Connexion réussie",
-                        'status' => 200,
                         'profile' => $profile,
                         'token' => $token
                     ];
                 }
             }
         }else{
-            $response = [
-                'message' => "Veuillez renseigner tous les champs",
-                'status' => 422
-            ];
+            $response = "Veuillez renseigner tous les champs";
+            http_response_code(422);
         }
-        http_response_code($response['status']);
-
         echo json_encode($response);
     }
 
