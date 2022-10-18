@@ -31,11 +31,11 @@ class Profile extends Model
 
     public function create($profile)
     {
-        $res = false;
         try {
             $register = $this->connection->getPdo()->prepare('INSERT INTO users (email, password, name, first_name, username ) VALUE (?,?,?,?,?)');
             $register->execute(array($profile['email'], password_hash($profile['password'], PASSWORD_BCRYPT), $profile['name'],
                 $profile['first_name'], $profile['username']));
+            $mess = "L'utilisateur a été enregistrer";
         } catch (PDOException $e) {
             $status = 400;
             if ($e->getCode() == 23000)
@@ -43,10 +43,10 @@ class Profile extends Model
             else
                 $mess = $e->getMessage();
 
-            $res = $mess;
+
             http_response_code($status);
         }
-        return $res;
+        return $mess;
     }
 
     public function update($token, $profile)

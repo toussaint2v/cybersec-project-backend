@@ -28,16 +28,16 @@ class ProfileController extends Controller
     public static function store(array $form)
     {
         $validation = new Validation();
-        $status = 201;
-        $mess = "L'utilisateur a été enregistrer";
+        http_response_code(201);
+
+
 
         if ($form = $validation->validate($form)) {
-            (new Profile())->create($form);
+            $mess = (new Profile())->create($form);
         } else {
             $mess = 'Veuillez renseigner tous les champs';
-            $status = 422;
+            http_response_code(422);
         }
-        http_response_code($status);
         echo json_encode($mess);
     }
 

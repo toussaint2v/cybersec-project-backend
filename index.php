@@ -98,10 +98,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
     // recuperation des données envoyées par la requête
     $formData = json_decode(file_get_contents("php://input"), true);
     switch ($requestURL) {
-        case '/api/login' :
+        case '/api/login':
             (new AuthController())->login($formData);
             break;
-        case '/api/profile/store' :
+        case '/api/profile/store':
             ProfileController::store($formData);
             break;
         default:
