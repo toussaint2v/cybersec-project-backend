@@ -3,8 +3,6 @@
 namespace Src\models;
 require_once('src/models/Model.php');
 
-use PDOException;
-
 
 class Invitation extends Model
 {
@@ -14,7 +12,8 @@ class Invitation extends Model
         parent::__construct();
     }
 
-    public function create($from, $to){
+    public function create($from, $to): string
+    {
 
         $res = $this->connection->execute('INSERT INTO friends_invitations (`from`, `to`,`accepted`,`opened`) VALUE (?,?,?,?)',
             array($from, $to, 0, 0 ));
@@ -25,12 +24,12 @@ class Invitation extends Model
         return $res;
     }
 
-    public function getAll($token){
+    public function getAll($token): bool|array|string
+    {
         $sql = 'SELECT id, username, address, name, first_name, age, birthDate,`to`,`from` FROM users 
             JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE token = ? AND accepted = false';
-        $res =  $this->connection->getAll($sql, array($token));
 
-        return $res;
+        return $this->connection->getAll($sql, array($token));
     }
 
     public function delete($from, $to){
@@ -42,16 +41,15 @@ class Invitation extends Model
         return $res;
     }
 
-    public function accept($from, $to){
+    public function accept($from, $to): string
+    {
         $sql = 'UPDATE friends_invitations SET `accepted` =  ? WHERE `from` = ? AND `to` = ? ';
-        $res =  $this->connection->execute($sql, array(1, $from, $to));
-        return $res;
+        return $this->connection->execute($sql, array(1, $from, $to));
     }
 
     public function count($profileId){
         $sql = 'SELECT count(*) as notif FROM friends_invitations WHERE `to` = ? AND opened = 0 ';
-        $res =  $this->connection->get($sql, array($profileId));
-        return $res;
+        return $this->connection->get($sql, array($profileId));
     }
 
     public function openAll($profileId){
