@@ -36,4 +36,12 @@ class InvitaionController
 
         echo json_encode($res);
     }
+
+    public static function accept($from, $to){
+
+        $invitation = new Invitation();
+        $res = $invitation->accept($from, $to);
+
+        echo json_encode($res);
+    }
 }

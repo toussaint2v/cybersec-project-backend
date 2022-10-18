@@ -41,5 +41,11 @@ class Invitation extends Model
         }
         return $res;
     }
+
+    public function accept($from, $to){
+        $sql = 'UPDATE friends_invitations SET `accepted` =  ? WHERE `from` = ? AND `to` = ? ';
+        $res =  $this->connection->execute($sql, array(1, $from, $to));
+        return $res;
+    }
 }
 

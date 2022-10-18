@@ -16,7 +16,8 @@ $requestURL = $_SERVER['REQUEST_URI'];
 
 // recuperation du header de la requête
 $header = apache_request_headers();
-
+$url_components = parse_url($requestURL);
+$requestURL = $url_components['path'];
 // ROUTER
 // auth user (route protégée par authentification, verification du token)
 if (isset($header['Authorization']) && (new AuthController())->checkToken($header['Authorization'])) {
@@ -24,8 +25,7 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
     // recuperation du type de requête
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-            $url_components = parse_url($requestURL);
-            $requestURL = $url_components['path'];
+
             switch ($requestURL) {
                 case '/api/profile/edit' :
                     ProfileController::edit($_GET['id']);
@@ -59,6 +59,9 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                     break;
                 case '/api/invitation/send' :
                     InvitaionController::store($formData['from'], $formData['to']);
+                    break;
+                case '/api/invitation/accept' :
+                    InvitaionController::accept($formData['from'], $formData['to']);
                     break;
 
                 default:
