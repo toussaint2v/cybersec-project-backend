@@ -42,6 +42,9 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                 case '/api/friends' :
                     ProfileController::getFriends($_GET['idProfile']);
                     break;
+                case '/api/invitation/count':
+                    InvitaionController::count($_GET['profileId']);
+                    break;
                 default:
                     http_response_code(404);
                     break;
@@ -63,6 +66,10 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
                 case '/api/invitation/accept' :
                     InvitaionController::accept($formData['from'], $formData['to']);
                     break;
+                case '/api/invitations/open' :
+                    InvitaionController::openAll($formData['profileId']);
+                    break;
+
 
                 default:
                     http_response_code(404);

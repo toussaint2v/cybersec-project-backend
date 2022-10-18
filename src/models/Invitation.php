@@ -47,5 +47,19 @@ class Invitation extends Model
         $res =  $this->connection->execute($sql, array(1, $from, $to));
         return $res;
     }
+
+    public function count($profileId){
+        $sql = 'SELECT count(*) as notif FROM friends_invitations WHERE `to` = ? AND opened = 0 ';
+        $res =  $this->connection->get($sql, array($profileId));
+        return $res;
+    }
+
+    public function openAll($profileId){
+        $sql = 'UPDATE friends_invitations SET `opened` =  ? WHERE `to` = ? ';
+        $res =  $this->connection->execute($sql, array(1, $profileId));
+        if ($res === 'OK'){
+            http_response_code(204);
+        }
+    }
 }
 

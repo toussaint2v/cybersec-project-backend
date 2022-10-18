@@ -44,4 +44,17 @@ class InvitaionController
 
         echo json_encode($res);
     }
+
+    public static function count($profileId){
+        $invitation = new Invitation();
+        $res = $invitation->count($profileId);
+
+        echo json_encode($res);
+    }
+
+    public static function openAll($profileId){
+        $invitation = new Invitation();
+        $invitation->openAll($profileId);
+
+    }
 }
