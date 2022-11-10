@@ -2,13 +2,8 @@
 
 namespace Src\controllers;
 
-require_once "src/controllers/Controller.php";
-require_once('src/models/Profile.php');
-require_once('src/Validation.php');
-
 use Src\models\Profile;
 use Src\Validation;
-
 
 class ProfileController extends Controller
 {
@@ -18,9 +13,7 @@ class ProfileController extends Controller
     }
 
     public static function get($token){
-
         $profile = new Profile();
-
         echo json_encode($profile->get($token));
     }
 
@@ -29,8 +22,6 @@ class ProfileController extends Controller
     {
         $validation = new Validation();
         http_response_code(201);
-
-
 
         if ($form = $validation->validate($form)) {
             $mess = (new Profile())->create($form);

@@ -2,7 +2,6 @@
 
 namespace Src\controllers;
 
-require_once "src/models/Invitation.php";
 use Src\models\Invitation;
 
 class InvitaionController

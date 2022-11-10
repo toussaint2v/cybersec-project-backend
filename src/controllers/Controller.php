@@ -2,7 +2,6 @@
 
 namespace Src\controllers;
 
-
 use Src\databases\Connection;
 
 class Controller

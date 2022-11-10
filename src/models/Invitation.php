@@ -1,8 +1,6 @@
 <?php
 
 namespace Src\models;
-require_once('src/models/Model.php');
-
 
 class Invitation extends Model
 {

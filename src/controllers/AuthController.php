@@ -2,10 +2,6 @@
 
 
 namespace Src\controllers;
-include('src/utils/function.php');
-
-require_once 'src/controllers/Controller.php';
-require_once 'src/Validation.php';
 
 use Src\Validation;
 

@@ -1,15 +1,14 @@
 <?php
+require 'vendor/autoload.php';
 
 // configuration cors (header response)
 cors();
 
 // import des controllers
-require_once 'src/controllers/AuthController.php';
-require_once 'src/controllers/ProfileController.php';
-require_once 'src/controllers/InvitaionController.php';
 use Src\controllers\AuthController;
 use Src\controllers\InvitaionController;
 use Src\controllers\ProfileController;
+use Src\controllers\ResetPasswordController;
 
 // recuperation de la route demandée
 $requestURL = $_SERVER['REQUEST_URI'];
@@ -25,7 +24,6 @@ if (isset($header['Authorization']) && (new AuthController())->checkToken($heade
     // recuperation du type de requête
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-
             switch ($requestURL) {
                 case '/api/profile/edit' :
                     ProfileController::edit($_GET['id']);
@@ -106,6 +104,12 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
             break;
         default:
             http_response_code(404);
+            break;
+        case '/api/reset-password/sendEmail' :
+            ResetPasswordController::sendEmail($formData['email']);
+            break;
+        case '/api/reset-password/store' :
+            ResetPasswordController::store($formData);
             break;
     }
 }

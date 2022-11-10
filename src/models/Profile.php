@@ -2,12 +2,9 @@
 
 namespace Src\models;
 use PDOException;
-require_once('src/models/Model.php');
-
 
 class Profile extends Model
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -53,7 +50,6 @@ class Profile extends Model
     {
         $status = 422;
         try {
-
             $sql = $this->connection->getPdo()->prepare("UPDATE users SET username = :username, name = :name, 
                  first_name = :first_name, birthDate = :birthDate,
                  age = :age, address = :address WHERE token = '$token' && id = :id");
@@ -90,5 +86,28 @@ class Profile extends Model
 
         $profiles = $this->connection->getAll($req);
         return $profiles;
+    }
+
+    public function setPasswordToken($reset_password_token, $email){
+        return $this->connection->execute("UPDATE users SET reset_password_token = '$reset_password_token' WHERE email = '$email'");
+    }
+
+    public function updatePassword($email, $password){
+        $sql = "UPDATE users SET password = ? WHERE email = ?";
+        return $this->connection->execute($sql, array(password_hash($password, PASSWORD_BCRYPT), $email ));
+    }
+    public function resetPassword($formData){
+        $req = "SELECT reset_password_token FROM users WHERE email = ?";
+
+        if ($this->connection->get($req, array($formData['email']))['reset_password_token'] === $formData['password_token']){
+            $res = $this->updatePassword($formData['email'], $formData['password']);
+            if ($res === 'OK'){
+                $this->connection->execute("UPDATE users SET reset_password_token = '' WHERE email = ?", array($formData['email']));
+            }
+        }else{
+            $res = 'Erreur ! L\'email a probablement expiré';
+            http_response_code(400);
+        }
+        return $res;
     }
 }
