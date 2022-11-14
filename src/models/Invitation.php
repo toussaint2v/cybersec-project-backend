@@ -31,7 +31,7 @@ class Invitation extends Model
     }
 
     public function delete($from, $to){
-        $sql = 'DELETE FROM cyber_sec.friends_invitations WHERE `from` = ? AND `to` = ?';
+        $sql = 'DELETE FROM friends_invitations WHERE friends_invitations.from = ? AND friends_invitations.to = ?';
         $res =  $this->connection->execute($sql, array($from, $to));
         if ($res === 'OK'){
             http_response_code(204);

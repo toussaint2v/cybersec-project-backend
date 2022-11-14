@@ -10,17 +10,15 @@ class Connection{
     private $pdo;
     private string $error;
 
-    private $host = "localhost";
-    private $dbname = "cyber_sec";
-    private $username = "root";
-    private $password = "";
-
     public function __construct(){
+        $host = getenv('DB_HOST');
+        $dbname = getenv('DB_DATABASE');
+        $username = getenv('DB_USERNAME');
+        $password = getenv('DB_PASSWORD');
         //connection à la base de données
         try{
-            $this->pdo = new PDO('mysql:host='.$this->host.';dbname='.$this->dbname.';charset=utf8',
-                $this->username,$this->password);
-
+            $this->pdo = new PDO('mysql:host='.$host.';dbname='.$dbname.';charset=utf8',
+                $username,$password);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }catch(Exception $e){
             $this->error ='Erreur de connexion: '.$e->getMessage();

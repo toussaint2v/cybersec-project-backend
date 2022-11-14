@@ -23,7 +23,7 @@ class ResetPasswordController extends Controller
 
         $password_token = md5($email).rand(10,9999);
 
-        $link = "<a href='http://localhost:8081/reset-password?email=".$email."&password_token=".$password_token."'>Click To Reset password</a>";
+        $link = "<a href='".getenv('APP_URL')."/reset-password?email=".$email."&password_token=".$password_token."'>Click To Reset password</a>";
 
         $emailBody = 'Click On This Link to Reset Password ' . $link . '';
         $sendEmail = new Email($emailBody, $email);

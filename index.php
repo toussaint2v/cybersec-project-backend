@@ -1,14 +1,18 @@
 <?php
 require 'vendor/autoload.php';
 
-// configuration cors (header response)
-cors();
+
 
 // import des controllers
 use Src\controllers\AuthController;
 use Src\controllers\InvitaionController;
 use Src\controllers\ProfileController;
 use Src\controllers\ResetPasswordController;
+use Src\config\DotEnv;
+(new DotEnv(__DIR__ . '/.env'))->load();
+
+// configuration cors (header response)
+cors();
 
 // recuperation de la route demandée
 $requestURL = $_SERVER['REQUEST_URI'];
@@ -122,7 +126,7 @@ function cors()
     if (isset($_SERVER['HTTP_ORIGIN'])) {
         // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
         // you want to allow, and if so:
-        header("Access-Control-Allow-Origin: http://localhost:8081");
+        header('Access-Control-Allow-Origin: '.getenv('CORS_ORIGIN'));
         header('Access-Control-Allow-Credentials: true');
     }
 
