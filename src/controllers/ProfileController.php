@@ -25,6 +25,7 @@ class ProfileController extends Controller
 
         if ($form = $validation->validate($form)) {
             $mess = (new Profile())->create($form);
+            EmailConfirmationController::sendEmail($form['email']);
         } else {
             $mess = 'Veuillez renseigner tous les champs';
             http_response_code(422);

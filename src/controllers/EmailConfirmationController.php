@@ -6,7 +6,7 @@ namespace Src\controllers;
 use Src\models\Email;
 use Src\models\Profile;
 
-class ResetPasswordController extends Controller
+class EmailConfirmationController extends Controller
 {
     public function __construct()
     {
@@ -15,12 +15,13 @@ class ResetPasswordController extends Controller
 
     public static function store($formData)
     {
-        echo json_encode((new Profile)->resetPassword($formData));
+        echo json_encode((new Profile)->confirmEmail($formData));
+
     }
 
     public static function sendEmail(string $email)
     {
-        $password_token = md5($email) . rand(10, 9999);
+        $confirm_email_token = md5($email) . rand(10, 9999);
 
         $body = '
             <!doctype html>
@@ -64,15 +65,15 @@ class ResetPasswordController extends Controller
                                         </tr>
                                         <tr>
                                             <td style="padding:0 35px;">
-                                                <h1 style="color:#1e1e2d; font-weight:500; margin:0;font-size:32px;">Vous avez demandé une réinitialisation de mot de passe</h1>
+                                                <h1 style="color:#1e1e2d; font-weight:500; margin:0;font-size:32px;">Confirmation d\'email</h1>
                                                 <span
                                                         style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;"></span>
                                                 <p style="color:#455056; font-size:15px;line-height:24px; margin:0;">
-                                                    Veuillez clicker sur le bouton afin de réinitialiser votre mot de passe.
+                                                    Veuillez clicker sur le bouton afin de confirmer votre email.
                                                 </p>
-                                                <a href="' . getenv('APP_URL') . '/reset-password?email=' . $email . '&password_token=' . $password_token . '"
+                                                <a href="' . getenv('APP_URL') . '/login?email=' . $email . '&confirmation_token=' . $confirm_email_token . '"
                                                    style="background:#b820e2;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;">
-                                                   Réinitialiser le mot de passe
+                                                   Confirmer email
                                                 </a>
                                             </td>
                                         </tr>
@@ -103,11 +104,11 @@ class ResetPasswordController extends Controller
 
         //$link = "<a href='".getenv('APP_URL')."/reset-password?email=".$email."&password_token=".$password_token."'>Click To Reset password</a>";
 
-        (new Profile)->setPasswordToken($password_token, $email);
+        (new Profile)->setConfirmationToken($confirm_email_token, $email);
 
-        $sendEmail = new Email($body, $email, 'Réinitialisation mot de passe');
+        $sendEmail = new Email($body, $email, 'Confirmation d\'email');
 
-        echo json_encode($sendEmail->send());
+        return $sendEmail->send();
 
 
     }

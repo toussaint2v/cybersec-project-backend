@@ -8,13 +8,14 @@ class Email extends Model
 {
     private PHPMailer $mail;
 
-    public function __construct(string $body, string $mailTo)
+    public function __construct(string $body, string $mailTo, string $subject)
     {
         parent::__construct();
         $this->mail = new PHPMailer();
 
         $this->mail->IsSMTP();
         $this->mail->Host = getenv('MAIL_HOST');
+        $this->mail->CharSet = "UTF-8";
 
         // enable SMTP authentication
         if (getenv('MAIL_USERNAME') != '') {
@@ -31,7 +32,7 @@ class Email extends Model
         $this->mail->From = getenv('MAIL_FROM_ADDRESS');
         $this->mail->FromName = getenv('APP_NAME');
         $this->mail->AddAddress($mailTo);
-        $this->mail->Subject = 'Reset Password';
+        $this->mail->Subject = $subject;
         $this->mail->IsHTML();
         $this->mail->Body = $body;
 

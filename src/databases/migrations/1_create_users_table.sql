@@ -12,6 +12,8 @@ CREATE TABLE `users` (
   `token` varchar(128) DEFAULT NULL,
   `token_expiration` int DEFAULT NULL,
   `reset_password_token` varchar(64) DEFAULT NULL,
+  `isValidated` BOOLEAN DEFAULT FALSE,
+  `confirm_email_token` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_id_uindex` (`id`),
   UNIQUE KEY `users_username_uindex` (`username`),

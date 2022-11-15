@@ -5,6 +5,7 @@ require 'vendor/autoload.php';
 
 // import des controllers
 use Src\controllers\AuthController;
+use Src\controllers\EmailConfirmationController;
 use Src\controllers\InvitaionController;
 use Src\controllers\ProfileController;
 use Src\controllers\ResetPasswordController;
@@ -114,6 +115,9 @@ elseif ($_SERVER['REQUEST_METHOD'] === "POST") {
             break;
         case '/api/reset-password/store' :
             ResetPasswordController::store($formData);
+            break;
+        case '/api/confirm-email':
+            EmailConfirmationController::store($formData);
             break;
     }
 }

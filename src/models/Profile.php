@@ -110,4 +110,21 @@ class Profile extends Model
         }
         return $res;
     }
+
+    public function setConfirmationToken($confirm_email_token, $email){
+        return $this->connection->execute("UPDATE users SET confirm_email_token = '$confirm_email_token' WHERE email = '$email'");
+    }
+
+    public function confirmEmail($formData){
+        $req = "SELECT confirm_email_token FROM users WHERE email = ?";
+
+        if ($this->connection->get($req, array($formData['email']))['confirm_email_token'] === $formData['confirm_email_token']){
+
+            $this->connection->execute("UPDATE users SET confirm_email_token = '', isValidated = true WHERE email = ?", array($formData['email']));
+        }else{
+            $res = 'Erreur ! L\'email a probablement expiré';
+            http_response_code(400);
+        }
+        return $res;
+    }
 }
