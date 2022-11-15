@@ -31,7 +31,7 @@ class AuthController extends Controller
                     $token = openssl_random_pseudo_bytes(64);
                     $token = bin2hex($token);
                     $this->connection->execute("UPDATE users SET token = ? WHERE email = ?", array($token, $email));
-                    $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE id = ? AND token = ?";
+                    $req = "SELECT id, username, address, name, first_name, birthDate FROM users WHERE id = ? AND token = ?";
                     $profile = $this->connection->get($req, array($user['id'], $token));
                     http_response_code(200);
                     $response = [
@@ -61,7 +61,7 @@ class AuthController extends Controller
 
     function checkToken($token){
         $rt = false;
-        $sql = $this->connection->getPdo()->prepare( "SELECT id, username, email, address, name, first_name, age FROM users WHERE token = ?");
+        $sql = $this->connection->getPdo()->prepare( "SELECT id, username, email, address, name, first_name FROM users WHERE token = ?");
         $sql->execute(array($token));
         $verif_ok = $sql->rowCount();
         if ($verif_ok === 1)

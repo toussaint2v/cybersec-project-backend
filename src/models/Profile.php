@@ -12,14 +12,14 @@ class Profile extends Model
 
 
     public function get($id){
-        $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users WHERE id = ?";
+        $req = "SELECT id, username, address, name, first_name, birthDate FROM users WHERE id = ?";
         $profile = $this->connection->get($req, array($id));
 
         return $profile;
     }
 
     public function getAll(){
-        $req = "SELECT id, username, address, name, first_name, age, birthDate FROM users";
+        $req = "SELECT id, username, address, name, first_name, birthDate FROM users";
 
         $profiles = $this->connection->getAll($req);
 
@@ -29,9 +29,9 @@ class Profile extends Model
     public function create($profile)
     {
         try {
-            $register = $this->connection->getPdo()->prepare('INSERT INTO users (email, password, name, first_name, username ) VALUE (?,?,?,?,?)');
+            $register = $this->connection->getPdo()->prepare('INSERT INTO users (email, password, name, first_name, username, birthDate, address ) VALUE (?,?,?,?,?,?,?)');
             $register->execute(array($profile['email'], password_hash($profile['password'], PASSWORD_BCRYPT), $profile['name'],
-                $profile['first_name'], $profile['username']));
+                $profile['first_name'], $profile['username'], $profile['birthDate'], $profile['address']));
             $mess = "L'utilisateur a été enregistrer";
         } catch (PDOException $e) {
             $status = 400;
@@ -52,7 +52,7 @@ class Profile extends Model
         try {
             $sql = $this->connection->getPdo()->prepare("UPDATE users SET username = :username, name = :name, 
                  first_name = :first_name, birthDate = :birthDate,
-                 age = :age, address = :address WHERE token = '$token' && id = :id");
+                  address = :address WHERE token = '$token' && id = :id");
 
             $sql->execute($profile);
             $status = 200;
@@ -70,7 +70,7 @@ class Profile extends Model
     }
 
     public function search($search, $idProfile){
-        $req = "SELECT id, username, address, name, first_name, age, birthDate, `to`, `from`, `accepted` FROM users 
+        $req = "SELECT id, username, address, name, first_name, birthDate, `to`, `from`, `accepted` FROM users 
                LEFT JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE (name LIKE '%{$search}%' OR 
                 first_name LIKE '%{$search}%' OR username LIKE '%{$search}%') AND {$idProfile} <> id ";
 

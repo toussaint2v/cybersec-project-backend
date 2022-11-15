@@ -24,7 +24,7 @@ class Invitation extends Model
 
     public function getAll($token): bool|array|string
     {
-        $sql = 'SELECT id, username, address, name, first_name, age, birthDate,`to`,`from` FROM users 
+        $sql = 'SELECT id, username, address, name, first_name, birthDate,`to`,`from` FROM users 
             JOIN friends_invitations ON users.id = friends_invitations.`to` WHERE token = ? AND accepted = false';
 
         return $this->connection->getAll($sql, array($token));

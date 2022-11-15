@@ -150,7 +150,6 @@ CREATE TABLE `users` (
   `name` varchar(64) DEFAULT NULL,
   `first_name` varchar(64) DEFAULT NULL,
   `birthDate` date DEFAULT NULL,
-  `age` int DEFAULT NULL,
   `token` varchar(128) DEFAULT NULL,
   `token_expiration` int DEFAULT NULL,
   PRIMARY KEY (`id`),
